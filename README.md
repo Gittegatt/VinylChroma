@@ -248,6 +248,8 @@ fallback-AP, and web-login passwords, so treat exported JSON files as secrets.
 VinylChroma is source-available under the
 [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0).
 
+Required Notice: Copyright 2026 Gittegatt
+
 Personal, educational, research, hobby, and other noncommercial use is
 permitted subject to the license terms. Commercial use requires a separate
 written license from the copyright holder. Because commercial use is
