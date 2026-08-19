@@ -1,4 +1,4 @@
-# VinylChroma
+# 🎵 VinylChroma — Let Your Vinyl Shine 🌈
 
 **Stable release: v1.0.0**
 
@@ -9,7 +9,9 @@ VinylChroma controller handles sensing,
 calibration, averaging, presence detection, and output decisions; it does not
 drive the addressable LED strip data line itself.
 
-## Features
+### **Bring your vinyl colors to life and let them set the mood — from a subtle turntable glow to lighting up your room or your entire home.**
+
+## ✨ Features
 
 - One to four independently configurable TCS34725 color sensors
 - Direct I²C operation for one sensor or TCA9548A multiplexing for two to four
@@ -27,7 +29,7 @@ drive the addressable LED strip data line itself.
 - Configuration backup/restore, browser-based OTA updates with a persistent allow/deny switch, and factory reset
 - Optional HTTP Basic Authentication for the web interface and built-in APIs
 
-## Supported Hardware
+## 🧩 Supported Hardware
 
 | Component | Quantity | Notes |
 | --- | ---: | --- |
@@ -45,7 +47,7 @@ specific sensor breakout. All devices must share ground. Do not drive a lamp or
 high-current LED load directly from an ESP32 GPIO; use the breakout's logic-level
 LED control or a suitable driver circuit.
 
-## Default Wiring
+## 🔌 Default Wiring
 
 | Signal | ESP32-S3 pin | Function |
 | --- | --- | --- |
@@ -68,7 +70,18 @@ The configurable ESP32-S3 GPIO allowlist is `1`, `2`, `4–18`, and `21`. GPIO3
 is avoided because it is a strapping pin, while GPIO19 and GPIO20 are reserved
 for native USB. SDA, SCL, and all four illumination GPIOs must be unique.
 
-## Build Requirements
+## 🏗️ 3D Printable Enclosure
+
+I designed a dedicated 3D-printable enclosure for VinylChroma that provides space for the ESP32-S3 SuperMini and the TCS34725 color sensor, including the sensor light shield and PCB mounting features.
+
+The firmware and source code remain freely available here on GitHub. The optional enclosure STL files are available separately on Cults3D.
+
+If you like this project and would like to support its development, purchasing the enclosure model would be greatly appreciated!
+
+#### **[Get the VinylChroma enclosure on Cults3D](CULTS3D_URL)**
+
+## 🚀 Getting Started
+### 📦 Build Requirements
 
 - [PlatformIO](https://platformio.org/) Core CLI or the PlatformIO IDE extension
 - A USB data cable for the initial flash
@@ -77,7 +90,7 @@ for native USB. SDA, SCL, and all four illumination GPIOs must be unique.
 Dependencies are pinned in `platformio.ini` and are installed automatically by
 PlatformIO.
 
-## Build and Initial USB Flash
+### ⚡ Build and Initial USB Flash
 
 From the repository root:
 
@@ -106,7 +119,7 @@ The web interface is embedded in the firmware. No filesystem image or
 `uploadfs` step is required. A clean build is normally unnecessary; use
 `pio run -t clean` only when investigating stale artifacts or toolchain issues.
 
-## First Start and Factory Defaults
+### 📶 First Start and Factory Defaults
 
 The following access point is created after a factory reset or when no station
 Wi-Fi configuration is available:
@@ -127,7 +140,7 @@ Change the public default fallback-AP password during setup. Web Access
 Protection is disabled by default and should be enabled when other clients can
 reach the device.
 
-## Initial Configuration
+### ⚙️ Initial Configuration
 
 1. Open **Sensors** and verify the I²C GPIOs, illumination GPIOs, and TCA channels.
 2. Enable the installed sensors and confirm they are detected on the Dashboard.
@@ -141,7 +154,8 @@ reach the device.
 Recalibrate after changing sensor geometry, illumination brightness, LED
 correction, TCA wiring, or an individual sensor.
 
-### WLED Output Options
+## WLED 🔵🔴🟠🟡🟢
+### 🎨 WLED Output Options
 
 - **WLED Transmission Enabled** sends accepted colors and automatic on/off commands.
 - **Send Brightness** includes the configured global WLED brightness; when disabled,
@@ -152,7 +166,7 @@ correction, TCA wiring, or an individual sensor.
 WLED transitions, gamma correction, current limiting, color order, and RGBW
 behavior remain WLED settings.
 
-### Darkness Cutoff
+### 🔦 Darkness Cutoff
 
 After White Calibration, the **Vinyl** page shows a relative light level from
 `0%` at the stored LED-off baseline to `100%` at the illuminated white
@@ -163,40 +177,105 @@ level of an already detected record remains below the configured threshold.
 Presence detection and absence timers are not changed, and debug overrides and
 effects bypass the cutoff. The option is disabled by default.
 
-## OTA Updates
 
+## 📡 OTA Updates
+
+VinylChroma supports firmware updates both through the web interface and directly from PlatformIO over Wi-Fi.
+
+### 🌐 Browser OTA
 Browser-based firmware uploads are allowed by default. Under
 **System → Firmware OTA**, keep **Allow Firmware OTA Updates** enabled and save
-the setting before selecting `firmware.bin`. A successful update reboots the
-controller automatically.
+the setting before selecting `firmware.bin`.
+
+A successful update reboots the controller automatically.
 
 Disable the checkbox when OTA is not needed. The `/update` endpoint then rejects
 firmware uploads before writing to flash. This setting does not disable USB
 flashing, so OTA can still be restored with a USB upload if web access is lost.
 
-Normal USB and OTA uploads using the same partition layout preserve settings
-and calibration. A flash erase, factory reset, or incompatible partition-table
-change can remove or invalidate stored data.
+### >_ PlatformIO OTA
 
-## Persistence
+For later firmware updates over Wi-Fi, use the dedicated OTA environment:
 
-Stored in ESP32 NVS and preserved across normal reboots/uploads:
+```ini
+[env:esp32-s3-supermini-ota]
+upload_protocol = espota
+upload_port = 192.168.0.25
+```
+
+From the repository root:
+
+```powershell
+pio run -e esp32-s3-supermini-ota
+pio run -e esp32-s3-supermini-ota -t upload
+```
+
+If the controller uses a different IP address, specify it directly:
+
+```powershell
+pio run -e esp32-s3-supermini-ota -t upload --upload-port 192.168.0.25
+```
+
+Replace `192.168.0.25` with the current IP address of your VinylChroma controller.
+
+The controller must already be connected to the same network and the PlatformIO OTA service must be running before an `espota` upload can be performed.
+
+The firmware image is generated at:
+
+```text
+.pio/build/esp32-s3-supermini-ota/firmware.bin
+```
+
+The web interface is embedded in the firmware. No filesystem image or
+`uploadfs` step is required.
+
+A clean build is normally unnecessary. Use:
+
+```powershell
+pio run -e esp32-s3-supermini-ota -t clean
+```
+
+only when investigating stale artifacts or toolchain issues.
+</details>
+
+
+## 💾 Persistence
+
+### Stored in NVS
+
+Preserved across normal reboots and firmware uploads:
 
 - Wi-Fi and fallback-AP configuration
 - GPIO, sensor, averaging, timer, and WLED settings
 - White/dark calibration references and manual per-sensor corrections
 - Web authentication and OTA-permission configuration
 
-Kept only in RAM and cleared by reboot:
+### RAM-only Data
+
+Cleared on every reboot:
 
 - Color History
 - Debug overrides and simulations
 - Runtime logs
 
+### Configuration Backup
+
 Configuration imports are limited to 16 KB. Exports include stored Wi-Fi,
 fallback-AP, and web-login passwords, so treat exported JSON files as secrets.
 
-## Security
+### 🔄 Flash Behavior During Updates
+
+Normal USB, browser OTA, and PlatformIO OTA uploads using the same partition
+layout preserve settings and calibration.
+
+A full flash erase, factory reset, or incompatible partition-table change can
+remove or invalidate stored data.
+
+A full flash erase cannot be performed over OTA. Use the USB environment and a
+serial connection when `erase` is required.
+
+
+## 🔐 Security
 
 - The web interface, API, OTA upload, and WLED requests use unencrypted HTTP.
 - Optional Web Access Protection uses HTTP Basic Authentication, not TLS.
@@ -205,7 +284,7 @@ fallback-AP, and web-login passwords, so treat exported JSON files as secrets.
 - The WLED client does not support WLED authentication or HTTPS.
 - Use VinylChroma only on a trusted local network or an appropriately isolated VLAN.
 
-## Configuration Ranges
+## 🎛️ Configuration Ranges & Tweaks
 
 | Setting | Range |
 | --- | --- |
@@ -220,7 +299,7 @@ fallback-AP, and web-login passwords, so treat exported JSON files as secrets.
 | Output Value normalization | 0–100% |
 | Darkness cutoff | 0.0–100.0% (disabled by default) |
 
-## Troubleshooting
+## 🛠️ Troubleshooting
 
 - If the updated GUI looks stale, perform a hard refresh (`Ctrl+F5`).
 - If Wi-Fi cannot connect, wait for the fallback access point when it is enabled
@@ -234,7 +313,7 @@ fallback-AP, and web-login passwords, so treat exported JSON files as secrets.
   RGB/RGBW mode, color order, gamma correction, and power limiting.
 - Do not erase flash or clean the build unless a specific problem requires it.
 
-## Project Structure
+## 📁 Project Structure
 
 | Path | Purpose |
 | --- | --- |
@@ -243,7 +322,7 @@ fallback-AP, and web-login passwords, so treat exported JSON files as secrets.
 | `platformio.ini` | Board profile, build flags, partition layout, and dependencies |
 | `.pio/` | Generated local build output; excluded from Git |
 
-## License
+## 📄 License
 
 VinylChroma is source-available under the
 [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0).
@@ -256,7 +335,7 @@ written license from the copyright holder. Because commercial use is
 restricted, this is not an OSI-approved open-source license. Third-party
 components remain subject to their respective licenses.
 
-## Contact
+## ✉️ Contact
 
 For project information and commercial licensing inquiries, visit
 [github.com/Gittegatt/VinylChroma](https://github.com/Gittegatt/VinylChroma)
