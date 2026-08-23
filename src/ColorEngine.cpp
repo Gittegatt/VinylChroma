@@ -23,6 +23,17 @@ RgbColor normalizeValue(RgbColor color,uint8_t strength){
  auto scale=[targetHundred,denominator](uint8_t channel){return(uint8_t)((uint32_t(channel)*targetHundred+denominator/2U)/denominator);};
  return{scale(color.red),scale(color.green),scale(color.blue)};
 }
+RgbColor adjustSaturation(RgbColor color,uint16_t percent){
+ uint8_t maximum=max(color.red,max(color.green,color.blue));
+ percent=min<uint16_t>(percent,200);
+ if(maximum==0||percent==100)return color;
+ auto adjust=[maximum,percent](uint8_t channel){
+  uint32_t delta=(uint32_t(maximum)-channel)*percent;
+  uint32_t adjustedDelta=(delta+50U)/100U;
+  return(uint8_t)(adjustedDelta>=maximum?0:maximum-adjustedDelta);
+ };
+ return{adjust(color.red),adjust(color.green),adjust(color.blue)};
+}
 RgbColor marblePaletteColor(RgbColor base,uint16_t count,uint16_t index,uint8_t strength){
  if(strength==0)return base;
  constexpr float TwoPi=6.28318530718F,HueRadius=28.0F/360.0F;
@@ -345,7 +356,12 @@ void ColorEngine::update(RgbColor raw,bool present,const DebugOverrides&o,bool n
     candidate_=measured_;
     candidateSince_=now-holdMs;
    }
-   setOutput(normalizeAcceptedOutput?normalizeValue(candidate_,config_.vinyl.outputNormalizationStrength):candidate_,true,"VinylColor",true);
+   RgbColor acceptedOutput=candidate_;
+   if(normalizeAcceptedOutput){
+    acceptedOutput=adjustSaturation(acceptedOutput,config_.vinyl.outputSaturationPercent);
+    acceptedOutput=normalizeValue(acceptedOutput,config_.vinyl.outputNormalizationStrength);
+   }
+   setOutput(acceptedOutput,true,"VinylColor",true);
    acceptedThisPresence_=true;
   }else state_="WaitingForStableColor";
  }else{

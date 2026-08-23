@@ -74,12 +74,64 @@ String migratedHostname(String value){
  while(value.endsWith("-"))value.remove(value.length()-1);
  return value.isEmpty()?String(DefaultHostname):value;
 }
+void resetBoardSpecificSettings(JsonDocument&document,const AppConfig&defaults){
+ JsonObject hardware=document["hardware"].is<JsonObject>()
+  ?document["hardware"].as<JsonObject>()
+  :document["hardware"].to<JsonObject>();
+ hardware["boardProfile"]=BoardProfile::Id;
+ hardware["i2cSdaPin"]=defaults.hardware.i2cSdaPin;
+ hardware["i2cSclPin"]=defaults.hardware.i2cSclPin;
+ hardware.remove("sensorLedPins");
+ auto pins=hardware["sensorLedPins"].to<JsonArray>();
+ for(uint8_t pin:defaults.hardware.sensorLedPins)pins.add(pin);
+ hardware.remove("tcaChannels");
+ auto channels=hardware["tcaChannels"].to<JsonArray>();
+ for(uint8_t channel:defaults.hardware.tcaChannels)channels.add(channel);
+
+ auto sensors=document["sensors"];
+ if(!sensors.is<JsonArray>()||sensors.size()!=MaxSensors)return;
+ for(size_t i=0;i<MaxSensors;i++){
+  JsonObject sensor=sensors[i];
+  if(sensor.isNull())continue;
+  JsonObject calibration=sensor["calibration"].is<JsonObject>()
+   ?sensor["calibration"].as<JsonObject>()
+   :sensor["calibration"].to<JsonObject>();
+  calibration["red"]=defaults.sensors[i].calibration.red;
+  calibration["green"]=defaults.sensors[i].calibration.green;
+  calibration["blue"]=defaults.sensors[i].calibration.blue;
+  calibration["lightBrightness"]=defaults.sensors[i].calibration.lightBrightness;
+  calibration["valid"]=false;
+  calibration["darkClear"]=0;
+  calibration["whiteClear"]=0;
+  calibration["brightnessValid"]=false;
+  JsonObject manual=sensor["manualCorrection"].is<JsonObject>()
+   ?sensor["manualCorrection"].as<JsonObject>()
+   :sensor["manualCorrection"].to<JsonObject>();
+  manual["red"]=defaults.sensors[i].manualCorrection.red;
+  manual["green"]=defaults.sensors[i].manualCorrection.green;
+  manual["blue"]=defaults.sensors[i].manualCorrection.blue;
+ }
+}
 void migrateLegacy(JsonDocument&document,long schema){
- if(schema>=ConfigStore::SchemaVersion)return;
  AppConfig defaults;
  setFactoryDefaults(defaults);
  auto hardware=document["hardware"];
+ bool profileMissing=!hardware.is<JsonObject>()||hardware["boardProfile"].isNull();
+ String storedProfile=profileMissing?String():hardware["boardProfile"].as<String>();
+ bool profileMismatch=!profileMissing&&storedProfile!=BoardProfile::Id;
+ // Schema 12 and earlier were released only for the S3 Super Mini. Preserve
+ // its custom mapping on that board, but never transplant those pins to a
+ // different compiled profile.
+ if(profileMissing&&schema<13&&String(BoardProfile::Id)!="esp32-s3-supermini")profileMismatch=true;
+ if(profileMismatch)resetBoardSpecificSettings(document,defaults);
+ else{
+  if(!hardware.is<JsonObject>())hardware=document["hardware"].to<JsonObject>();
+  hardware["boardProfile"]=BoardProfile::Id;
+ }
+ if(schema>=ConfigStore::SchemaVersion){document["schemaVersion"]=ConfigStore::SchemaVersion;return;}
+ hardware=document["hardware"];
  if(hardware.is<JsonObject>()){
+  hardware["boardProfile"]=BoardProfile::Id;
   if(hardware["i2cSdaPin"].isNull())hardware["i2cSdaPin"]=defaults.hardware.i2cSdaPin;
   if(hardware["i2cSclPin"].isNull())hardware["i2cSclPin"]=defaults.hardware.i2cSclPin;
   if(hardware["sensorLedPins"].isNull()){
@@ -168,6 +220,8 @@ void migrateLegacy(JsonDocument&document,long schema){
   if(system["developerMode"].isNull())system["developerMode"]=defaults.system.developerMode;
   if(system["logLevel"].isNull())system["logLevel"]=(int)defaults.system.logLevel;
   if(system["otaEnabled"].isNull())system["otaEnabled"]=defaults.system.otaEnabled;
+  if(system["browserOtaEnabled"].isNull())system["browserOtaEnabled"]=defaults.system.browserOtaEnabled;
+  if(system["platformioOtaEnabled"].isNull())system["platformioOtaEnabled"]=defaults.system.platformioOtaEnabled;
   if(system["authenticationEnabled"].isNull())system["authenticationEnabled"]=defaults.system.authenticationEnabled;
   if(system["authenticationUser"].isNull())system["authenticationUser"]=defaults.system.authenticationUser;
   if(system["authenticationPassword"].isNull())system["authenticationPassword"]=defaults.system.authenticationPassword;
@@ -190,6 +244,7 @@ void migrateLegacy(JsonDocument&document,long schema){
    if(vinyl["requiredSensors"].isNull())vinyl["requiredSensors"]=defaults.vinyl.requiredSensors;
  if(vinyl["colorChangeThreshold"].isNull())vinyl["colorChangeThreshold"]=defaults.vinyl.colorChangeThreshold;
  if(vinyl["colorHoldSeconds"].isNull())vinyl["colorHoldSeconds"]=defaults.vinyl.colorHoldSeconds;
+ if(vinyl["outputSaturationPercent"].isNull())vinyl["outputSaturationPercent"]=defaults.vinyl.outputSaturationPercent;
  if(vinyl["outputNormalizationStrength"].isNull())vinyl["outputNormalizationStrength"]=defaults.vinyl.outputNormalizationStrength;
   if(schema<8){
    vinyl["darknessCutoffEnabled"]=defaults.vinyl.darknessCutoffEnabled;
@@ -266,7 +321,7 @@ void migrateLegacy(JsonDocument&document,long schema){
 bool completeBackup(JsonVariantConst document){
  auto hardware=document["hardware"];auto wifi=document["wifi"];auto light=document["light"];
  auto measurement=document["measurement"];auto vinyl=document["vinyl"];auto wled=document["wled"];auto system=document["system"];
- if(!hardware.is<JsonObjectConst>()||hardware["i2cSdaPin"].isNull()||hardware["i2cSclPin"].isNull()||
+ if(!hardware.is<JsonObjectConst>()||hardware["boardProfile"].isNull()||hardware["i2cSdaPin"].isNull()||hardware["i2cSclPin"].isNull()||
     !hardware["sensorLedPins"].is<JsonArrayConst>()||!hardware["tcaChannels"].is<JsonArrayConst>())return false;
  if(!wifi.is<JsonObjectConst>()||wifi["ssid"].isNull()||wifi["password"].isNull()||wifi["hostname"].isNull()||
     wifi["fallbackEnabled"].isNull()||wifi["fallbackDelaySeconds"].isNull()||wifi["fallbackSsid"].isNull()||wifi["fallbackPassword"].isNull())return false;
@@ -278,7 +333,8 @@ bool completeBackup(JsonVariantConst document){
     !measurement["sharedExposure"].is<JsonObjectConst>()||measurement["sharedExposure"]["gain"].isNull()||
     measurement["sharedExposure"]["integration"].isNull())return false;
   if(!vinyl.is<JsonObjectConst>()||vinyl["presenceDetection"].isNull()||vinyl["clearThreshold"].isNull()||
-     vinyl["requiredSensors"].isNull()||vinyl["colorChangeThreshold"].isNull()||vinyl["colorHoldSeconds"].isNull()||vinyl["outputNormalizationStrength"].isNull()||
+     vinyl["requiredSensors"].isNull()||vinyl["colorChangeThreshold"].isNull()||vinyl["colorHoldSeconds"].isNull()||
+    vinyl["outputSaturationPercent"].isNull()||vinyl["outputNormalizationStrength"].isNull()||
     vinyl["darknessCutoffEnabled"].isNull()||vinyl["darknessCutoffPercent"].isNull()||
     vinyl["defaultEnabled"].isNull()||vinyl["defaultAfterSeconds"].isNull()||!vinyl["defaultColor"].is<JsonObjectConst>()||
     vinyl["defaultColor"]["r"].isNull()||vinyl["defaultColor"]["g"].isNull()||vinyl["defaultColor"]["b"].isNull()||
@@ -287,6 +343,7 @@ bool completeBackup(JsonVariantConst document){
     wled["updateIntervalMs"].isNull()||wled["segment"].isNull()||wled["brightness"].isNull()||
     wled["sendBrightness"].isNull()||wled["keepSelectedEffect"].isNull())return false;
  if(!system.is<JsonObjectConst>()||system["developerMode"].isNull()||system["logLevel"].isNull()||system["otaEnabled"].isNull()||
+    system["browserOtaEnabled"].isNull()||system["platformioOtaEnabled"].isNull()||
     system["authenticationEnabled"].isNull()||system["authenticationUser"].isNull()||
     system["authenticationPasswordSet"].isNull()||system["authenticationPassword"].isNull())return false;
  auto sensors=document["sensors"];
@@ -327,11 +384,13 @@ bool ConfigStore::load(){
  if(!opened_){lastError_="configuration storage is not open";healthy_=false;return false;}
  String stored=preferences_.getString("config","");
  if(stored.isEmpty()){lastError_="";healthy_=true;return true;}
- JsonDocument metadata;long storedSchema=0;bool schemaMigration=false;
+ JsonDocument metadata;long storedSchema=0;bool schemaMigration=false,profileMigration=true;
  if(!deserializeJson(metadata,stored)&&readInteger(metadata["schemaVersion"],0,SchemaVersion,storedSchema))
   schemaMigration=storedSchema!=SchemaVersion;
+ if(metadata["hardware"]["boardProfile"].is<const char*>())
+  profileMigration=metadata["hardware"]["boardProfile"].as<String>()!=BoardProfile::Id;
  if(!importJson(stored)){healthy_=false;return false;}
- bool migrated=schemaMigration;
+ bool migrated=schemaMigration||profileMigration;
  if(config_.wifi.fallbackSsid=="VinylChroma-Setup"){config_.wifi.fallbackSsid="VinylChroma";migrated=true;}
  if(config_.wifi.fallbackPassword=="vinylchroma"){config_.wifi.fallbackPassword="vinyl!1234";migrated=true;}
  healthy_=true;
@@ -370,9 +429,15 @@ bool ConfigStore::importJson(const String&json,bool replace){
  if(schema==DowngradeSourceSchemaVersion){
   document.remove("externalApi");
  }
- if(!replace&&schema<SchemaVersion&&document["system"].is<JsonObject>()&&
-    document["system"]["otaEnabled"].isNull())
-  document["system"]["otaEnabled"]=config_.system.otaEnabled;
+ if(!replace&&schema<SchemaVersion&&document["system"].is<JsonObject>()){
+  auto system=document["system"];
+  if(system["otaEnabled"].isNull())system["otaEnabled"]=config_.system.otaEnabled;
+  if(system["browserOtaEnabled"].isNull())system["browserOtaEnabled"]=config_.system.browserOtaEnabled;
+  if(system["platformioOtaEnabled"].isNull())system["platformioOtaEnabled"]=config_.system.platformioOtaEnabled;
+ }
+ if(!replace&&schema<SchemaVersion&&document["vinyl"].is<JsonObject>()&&
+    document["vinyl"]["outputSaturationPercent"].isNull())
+  document["vinyl"]["outputSaturationPercent"]=config_.vinyl.outputSaturationPercent;
  migrateLegacy(document,schema);
  if(replace){
   if(!completeBackup(document)){lastError_="backup is incomplete";return false;}
@@ -386,7 +451,12 @@ bool ConfigStore::importJson(const String&json,bool replace){
 
 void ConfigStore::toJson(JsonDocument&document,bool includePassword)const{
  document["schemaVersion"]=SchemaVersion;
+ auto board=document["board"].to<JsonObject>();
+ board["id"]=BoardProfile::Id;board["name"]=BoardProfile::Name;
+ board["gpioNotes"]=BoardProfile::GpioNotes;
+ auto allowedGpios=board["allowedGpios"].to<JsonArray>();for(uint8_t pin:BoardProfile::AllowedGpios)allowedGpios.add(pin);
  auto hardware=document["hardware"].to<JsonObject>();
+ hardware["boardProfile"]=BoardProfile::Id;
  hardware["i2cSdaPin"]=config_.hardware.i2cSdaPin;hardware["i2cSclPin"]=config_.hardware.i2cSclPin;
  auto ledPins=hardware["sensorLedPins"].to<JsonArray>();for(auto pin:config_.hardware.sensorLedPins)ledPins.add(pin);
  auto channels=hardware["tcaChannels"].to<JsonArray>();for(auto channel:config_.hardware.tcaChannels)channels.add(channel);
@@ -408,7 +478,8 @@ void ConfigStore::toJson(JsonDocument&document,bool includePassword)const{
 
  auto vinyl=document["vinyl"].to<JsonObject>();
   vinyl["presenceDetection"]=config_.vinyl.presenceDetection;vinyl["clearThreshold"]=config_.vinyl.clearThreshold;vinyl["requiredSensors"]=config_.vinyl.requiredSensors;
-  vinyl["colorChangeThreshold"]=config_.vinyl.colorChangeThreshold;vinyl["colorHoldSeconds"]=config_.vinyl.colorHoldSeconds;vinyl["outputNormalizationStrength"]=config_.vinyl.outputNormalizationStrength;
+  vinyl["colorChangeThreshold"]=config_.vinyl.colorChangeThreshold;vinyl["colorHoldSeconds"]=config_.vinyl.colorHoldSeconds;
+  vinyl["outputSaturationPercent"]=config_.vinyl.outputSaturationPercent;vinyl["outputNormalizationStrength"]=config_.vinyl.outputNormalizationStrength;
  vinyl["darknessCutoffEnabled"]=config_.vinyl.darknessCutoffEnabled;vinyl["darknessCutoffPercent"]=config_.vinyl.darknessCutoffPercent;vinyl["defaultEnabled"]=config_.vinyl.defaultEnabled;
  vinyl["defaultAfterSeconds"]=config_.vinyl.defaultAfterSeconds;vinyl["defaultColor"]["r"]=config_.vinyl.defaultColor.red;vinyl["defaultColor"]["g"]=config_.vinyl.defaultColor.green;
  vinyl["defaultColor"]["b"]=config_.vinyl.defaultColor.blue;vinyl["offEnabled"]=config_.vinyl.offEnabled;vinyl["offAfterSeconds"]=config_.vinyl.offAfterSeconds;
@@ -418,7 +489,8 @@ void ConfigStore::toJson(JsonDocument&document,bool includePassword)const{
  wled["segment"]=config_.wled.segment;wled["brightness"]=config_.wled.brightness;wled["sendBrightness"]=config_.wled.sendBrightness;wled["keepSelectedEffect"]=config_.wled.keepSelectedEffect;
 
  auto system=document["system"].to<JsonObject>();
- system["developerMode"]=config_.system.developerMode;system["logLevel"]=(int)config_.system.logLevel;system["otaEnabled"]=config_.system.otaEnabled;system["authenticationEnabled"]=config_.system.authenticationEnabled;
+ system["developerMode"]=config_.system.developerMode;system["logLevel"]=(int)config_.system.logLevel;system["otaEnabled"]=config_.system.otaEnabled;
+ system["browserOtaEnabled"]=config_.system.browserOtaEnabled;system["platformioOtaEnabled"]=config_.system.platformioOtaEnabled;system["authenticationEnabled"]=config_.system.authenticationEnabled;
  system["authenticationUser"]=config_.system.authenticationUser;system["authenticationPasswordSet"]=!config_.system.authenticationPassword.isEmpty();
  if(includePassword)system["authenticationPassword"]=config_.system.authenticationPassword;
 
@@ -439,6 +511,9 @@ bool ConfigStore::fromJson(JsonVariantConst document){
  for(const char*section:sections)if(!optionalObject(document[section]))return false;
  lastError_="hardware or GPIO mapping is invalid";
  auto hardware=document["hardware"];
+ String profile=config_.hardware.boardProfile;
+ if(!readString(hardware["boardProfile"],profile,64,false)||profile!=BoardProfile::Id)return false;
+ config_.hardware.boardProfile=profile;
  long integer=config_.hardware.i2cSdaPin;
  if(!readInteger(hardware["i2cSdaPin"],0,255,integer))return false;config_.hardware.i2cSdaPin=(uint8_t)integer;
  integer=config_.hardware.i2cSclPin;if(!readInteger(hardware["i2cSclPin"],0,255,integer))return false;config_.hardware.i2cSclPin=(uint8_t)integer;
@@ -484,7 +559,7 @@ bool ConfigStore::fromJson(JsonVariantConst document){
  integer=config_.measurement.autoHighClear;if(!readInteger(measurement["autoHighClear"],1,65535,integer))return false;config_.measurement.autoHighClear=(uint16_t)integer;
  if(config_.measurement.autoLowClear>=config_.measurement.autoHighClear||!readExposure(measurement["sharedExposure"],config_.measurement.sharedExposure))return false;
 
- lastError_="vinyl detection or timer settings are invalid";
+ lastError_="vinyl detection, output, or timer settings are invalid";
  auto vinyl=document["vinyl"];
  if(!readBool(vinyl["presenceDetection"],config_.vinyl.presenceDetection)||!readBool(vinyl["defaultEnabled"],config_.vinyl.defaultEnabled)||
     !readBool(vinyl["offEnabled"],config_.vinyl.offEnabled)||!readBool(vinyl["darknessCutoffEnabled"],config_.vinyl.darknessCutoffEnabled))return false;
@@ -493,6 +568,7 @@ bool ConfigStore::fromJson(JsonVariantConst document){
   integer=config_.vinyl.colorChangeThreshold;if(!readInteger(vinyl["colorChangeThreshold"],0,764,integer))return false;config_.vinyl.colorChangeThreshold=(uint16_t)integer;
   if(!readFloat(vinyl["colorHoldSeconds"],0.0F,300.0F,config_.vinyl.colorHoldSeconds))return false;
   config_.vinyl.colorHoldSeconds=roundf(config_.vinyl.colorHoldSeconds*10.0F)/10.0F;
+  integer=config_.vinyl.outputSaturationPercent;if(!readInteger(vinyl["outputSaturationPercent"],0,200,integer))return false;config_.vinyl.outputSaturationPercent=(uint16_t)integer;
   integer=config_.vinyl.outputNormalizationStrength;if(!readInteger(vinyl["outputNormalizationStrength"],0,100,integer))return false;config_.vinyl.outputNormalizationStrength=(uint8_t)integer;
  if(!readFloat(vinyl["darknessCutoffPercent"],0.0F,100.0F,config_.vinyl.darknessCutoffPercent))return false;
  config_.vinyl.darknessCutoffPercent=roundf(config_.vinyl.darknessCutoffPercent*10.0F)/10.0F;
@@ -520,6 +596,7 @@ bool ConfigStore::fromJson(JsonVariantConst document){
  lastError_="system, OTA, or web authentication settings are invalid";
  auto system=document["system"];
  if(!readBool(system["developerMode"],config_.system.developerMode)||!readBool(system["otaEnabled"],config_.system.otaEnabled)||
+    !readBool(system["browserOtaEnabled"],config_.system.browserOtaEnabled)||!readBool(system["platformioOtaEnabled"],config_.system.platformioOtaEnabled)||
     !readBool(system["authenticationEnabled"],config_.system.authenticationEnabled))return false;
  integer=(long)config_.system.logLevel;if(!readInteger(system["logLevel"],0,3,integer))return false;config_.system.logLevel=(LogLevel)integer;
  if(!readString(system["authenticationUser"],config_.system.authenticationUser,32)||!readString(system["authenticationPassword"],config_.system.authenticationPassword,64))return false;

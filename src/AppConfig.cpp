@@ -1,11 +1,13 @@
 #include "AppConfig.h"
 namespace VinylChroma {
-bool isUsableGpio(uint8_t pin){ return pin==1||pin==2||(pin>=4&&pin<=18)||pin==21; }
+bool isUsableGpio(uint8_t pin){ return BoardProfile::isUsableGpio(pin); }
 bool validateHardwareConfig(const HardwareConfig& c){
- bool usedPins[22]{};
- auto usePin=[&](uint8_t pin){if(!isUsableGpio(pin)||usedPins[pin])return false;usedPins[pin]=true;return true;};
- if(!usePin(c.i2cSdaPin)||!usePin(c.i2cSclPin))return false;
- for(auto pin:c.sensorLedPins)if(!usePin(pin))return false;
+ if(c.boardProfile!=BoardProfile::Id)return false;
+ std::array<uint8_t,MaxSensors+2> pins{c.i2cSdaPin,c.i2cSclPin,c.sensorLedPins[0],c.sensorLedPins[1],c.sensorLedPins[2],c.sensorLedPins[3]};
+ for(size_t i=0;i<pins.size();i++){
+  if(!isUsableGpio(pins[i]))return false;
+  for(size_t previous=0;previous<i;previous++)if(pins[i]==pins[previous])return false;
+ }
  bool usedChannels[8]{};
  for(auto channel:c.tcaChannels){if(channel>7||usedChannels[channel])return false;usedChannels[channel]=true;}
  return true;

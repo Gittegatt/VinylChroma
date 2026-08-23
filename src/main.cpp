@@ -7,9 +7,11 @@
 #include "ColorEngine.h"
 #include "WledClient.h"
 #include "WebInterface.h"
+#include "PlatformioOta.h"
 using namespace VinylChroma;
 ConfigStore store; Logger logger; DebugOverrides overrides;
 LightController lights; NetworkManager* network=nullptr; SensorManager* sensors=nullptr; ColorEngine* engine=nullptr; WledClient* wled=nullptr; WebInterface* web=nullptr;
+PlatformioOta* platformioOta=nullptr;
 uint32_t busyWindowStart=0,busyMicros=0;
 void syncWled(){
  constexpr uint16_t MarbleUpdateIntervalMs=100;
@@ -26,11 +28,11 @@ void syncWled(){
 void setup(){
  Serial.begin(115200); delay(250); bool configReady=store.begin(); logger.setLevel(store.config().system.logLevel); logger.log(LogLevel::Info,String(FirmwareName)+" "+FirmwareVersion);
  if(!configReady)logger.log(LogLevel::Error,"Configuration storage is unavailable or invalid; safe factory defaults are active until a valid save or reset");
- lights.begin(store.config()); network=new NetworkManager(store.config(),logger); sensors=new SensorManager(store.config(),lights,logger); engine=new ColorEngine(store.config()); wled=new WledClient(store.config(),logger); web=new WebInterface(store,*network,*sensors,*engine,*wled,lights,logger,overrides);
- sensors->begin(); network->begin(); web->begin(); busyWindowStart=millis();
+ lights.begin(store.config()); network=new NetworkManager(store.config(),logger); sensors=new SensorManager(store.config(),lights,logger); engine=new ColorEngine(store.config()); wled=new WledClient(store.config(),logger); web=new WebInterface(store,*network,*sensors,*engine,*wled,lights,logger,overrides); platformioOta=new PlatformioOta(store.config(),*network,logger);
+ sensors->begin(); network->begin(); web->begin(); platformioOta->begin(); busyWindowStart=millis();
 }
 void loop(){
- uint32_t start=micros(); network->loop(); web->loop();
+ uint32_t start=micros(); network->loop(); web->loop(); platformioOta->loop();
  static uint32_t lastDebugUpdate=0;
  bool directDebugOutput=overrides.simulation!=SimulationMode::Off||
   (overrides.colorEnabled&&overrides.averageOnly);

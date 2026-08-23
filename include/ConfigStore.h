@@ -5,7 +5,7 @@
 namespace VinylChroma {
 class ConfigStore {
  public:
-  static constexpr uint8_t SchemaVersion=9;
+  static constexpr uint8_t SchemaVersion=13;
   static constexpr uint8_t DowngradeSourceSchemaVersion=7;
   bool begin();
   bool healthy()const{return healthy_;}
