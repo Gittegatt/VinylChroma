@@ -161,7 +161,25 @@ device, incorrect GPIO assignments, or an incompatible flash layout.
 | `-factory.bin` | Initial USB flash, recovery, or installation after a full flash erase |
 | `-ota.bin` | Browser OTA update of an already running matching board profile |
 
-Flash the matching **Factory Image** at address `0x0` with a compatible serial
+#### Easiest and Fastest Method: Browser Factory Flash
+
+The easiest and fastest first installation uses
+[ESPWebTool](https://esptool.spacehuhn.com/) and the matching Factory Image:
+
+1. Download the `-factory.bin` whose environment name exactly matches the board.
+2. Open ESPWebTool in a Web Serial-compatible browser and connect the controller's USB serial port.
+3. Keep only one file row and delete all additional rows.
+4. Set its flash address to `0x0000`. If the tool displays `0x` before the input, enter only `0`.
+5. Select the matching `-factory.bin` file.
+6. Click **ERASE**. This removes all existing settings and calibration data.
+7. Reconnect the serial port if requested, then click **PROGRAM**.
+8. Reset the controller once if it does not restart automatically.
+
+Do not split a VinylChroma Factory Image across the bootloader, partition,
+OTA-metadata, and application offsets. The single merged image already contains
+all required components at their correct positions.
+
+Flash the matching **Factory Image** at address `0x0000` with a compatible serial
 flashing tool. It contains the bootloader, partition table, OTA boot metadata,
 the VinylChroma application, and any additional board-specific boot image at
 their required flash offsets.
@@ -170,7 +188,7 @@ their required flash offsets.
 > Never upload a `-factory.bin` through the VinylChroma WebGUI. Browser OTA
 > expects only the application image and writes it into an OTA application
 > partition. A combined Factory Image contains bootloader and partition data
-> for address `0x0`; treating it as an application can leave the controller
+> for address `0x0000`; treating it as an application can leave the controller
 > unable to boot the update.
 
 After the initial flash, connect VinylChroma to the network and enable
