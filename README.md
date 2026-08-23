@@ -1,15 +1,24 @@
 # 🎵 VinylChroma — Let Your Vinyl Shine 🌈
 
+<br>
+<br>
 <p align="center">
   <img src="docs/media/02_vinylchroma_demonstration_darkness_cutoff_320.gif" width="320" alt="VinylChroma darkness cutoff demonstration">
   <img src="docs/media/03_vinylchroma_demonstration_vinyl_1_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration one">
 </p>
+
+
+<h3 align="center">
+  Bring your vinyl colors to life and let them shape the visual mood — from a subtle turntable glow to lighting up your room or your entire home.
+</h3>
+<br>
+
 <p align="center">
   <img src="docs/media/04_vinylchroma_demonstration_vinyl_2_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration two">
   <img src="docs/media/05_vinylchroma_demonstration_vinyl_3_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration three">
 </p>
+<br>
 
-<h3 align="center">Bring your vinyl colors to life and let them set the mood — from a subtle turntable glow to lighting up your room or your entire home.</h3>
 
 ## **Stable release: v1.0.0**
 
@@ -44,7 +53,7 @@ drive the addressable LED strip data line itself.
 
 > [!IMPORTANT]
 > Physical hardware testing has so far been performed only with the ESP32-S3
-> Super Mini and one directly connected TCS34725 sensor. The other board
+> Super Mini, ESP32-C3 Super Mini and one directly connected TCS34725 sensor. The other board
 > profiles are included but have not yet been validated on physical hardware.
 > Operation with more than one sensor through a TCA9548A multiplexer is
 > experimental and has not yet been hardware-tested.
@@ -67,7 +76,7 @@ variant. The names in the first column are the PlatformIO environment names.
 | --- | --- | --- | --- |
 | `esp32-s3-supermini` | ESP32-S3 Super Mini | Standard 4 MB flash / 2 MB PSRAM board | Author-tested |
 | `esp32-s3-zero` | Waveshare ESP32-S3-Zero | 4 MB flash / 2 MB PSRAM | Not yet confirmed |
-| `esp32-c3-supermini` | ESP32-C3 Super Mini | Standard 4 MB flash board | Not yet confirmed |
+| `esp32-c3-supermini` | ESP32-C3 Super Mini | Standard 4 MB flash board | Author-tested |
 | `esp32-c3-zero` | Waveshare ESP32-C3-Zero | 4 MB flash | Not yet confirmed |
 | `seeed-xiao-esp32-s3` | Seeed Studio XIAO ESP32-S3 | 8 MB flash / 8 MB PSRAM | Not yet confirmed |
 | `adafruit-qtpy-esp32-s3-n4r2` | Adafruit QT Py ESP32-S3 N4R2 | 4 MB flash / 2 MB PSRAM | Not yet confirmed |
@@ -83,7 +92,7 @@ pinout need a separate profile. PSRAM is configured where the official
 PlatformIO board definition requires it, but VinylChroma does not currently
 depend on PSRAM.
 
-### Sensors and lighting
+### 𖣠 Sensors and lighting
 
 | Component | Quantity | Notes |
 | --- | ---: | --- |
@@ -161,7 +170,7 @@ device, incorrect GPIO assignments, or an incompatible flash layout.
 | `-factory.bin` | Initial USB flash, recovery, or installation after a full flash erase |
 | `-ota.bin` | Browser OTA update of an already running matching board profile |
 
-#### Easiest and Fastest Method: Browser Factory Flash
+#### 🌐 Easiest Method: Browser Factory Flash
 
 The easiest and fastest first installation uses
 [ESPWebTool](https://esptool.spacehuhn.com/) and the matching Factory Image:
@@ -173,7 +182,7 @@ The easiest and fastest first installation uses
 5. Select the matching `-factory.bin` file.
 6. Click **ERASE**. This removes all existing settings and calibration data.
 7. Reconnect the serial port if requested, then click **PROGRAM**.
-8. Reset the controller once if it does not restart automatically.
+8. If the controller does not restart automatically, reset or power-cycle it once.
 
 Do not split a VinylChroma Factory Image across the bootloader, partition,
 OTA-metadata, and application offsets. The single merged image already contains
@@ -265,7 +274,7 @@ The web interface is embedded in the firmware. No filesystem image or
 `pio run -e <environment> -t clean` only when investigating stale artifacts or
 toolchain issues.
 
-### 📶 First Start and Factory Defaults
+### 🛜 First Start and Factory Defaults
 
 The following access point is created after a factory reset or when no station
 Wi-Fi configuration is available:
@@ -378,16 +387,17 @@ Presence detection and absence timers are not changed, and debug overrides and
 effects bypass the cutoff. The option is disabled by default.
 
 
-## 📡 OTA Updates
+## 📶 OTA Updates
 
 VinylChroma supports firmware updates both through the web interface and directly from PlatformIO over Wi-Fi.
 
 ### 🌐 Browser OTA
 All OTA methods are disabled by default. Under **System → Firmware OTA**, enable
 the master **OTA Flash Allowed** checkbox and its **Browser OTA** child checkbox,
-then save before selecting `firmware.bin`.
-Upload only the firmware image built for the board profile currently running on
-the controller.
+then save before selecting a firmware image. Use the matching `-ota.bin` from a
+GitHub release, or the locally built `.pio/build/<environment>/firmware.bin`.
+Upload only an image built for the board profile currently running on the
+controller.
 
 A successful update reboots the controller automatically.
 
@@ -508,7 +518,7 @@ serial connection when `erase` is required.
 - Use VinylChroma only on a trusted local network or an appropriately isolated VLAN.
 
 
-## 🛠️ Troubleshooting
+## 🔎 Troubleshooting
 
 - If the updated GUI looks stale, perform a hard refresh (`Ctrl+F5`).
 - If Wi-Fi cannot connect, wait for the fallback access point when it is enabled
