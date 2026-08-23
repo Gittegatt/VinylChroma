@@ -386,6 +386,12 @@ level of an already detected record remains below the configured threshold.
 Presence detection and absence timers are not changed, and debug overrides and
 effects bypass the cutoff. The option is disabled by default.
 
+> [!NOTE]
+> Pure black remains black. However, because the sensor measures reflected
+> light, a black record will usually be detected as dark gray and, with Output
+> Value Normalization enabled, normalized toward white—unless the Darkness
+> Cutoff is triggered.
+
 
 ## 📶 OTA Updates
 
