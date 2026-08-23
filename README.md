@@ -558,6 +558,12 @@ written license from the copyright holder. Because commercial use is
 restricted, this is not an OSI-approved open-source license. Third-party
 components remain subject to their respective licenses.
 
+## ☕ Support VinylChroma
+
+If you enjoy VinylChroma and would like to support its development:
+
+[![Support VinylChroma on Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/gittegatt)
+
 ## ✉️ Contact
 
 For project information and commercial licensing inquiries, visit
