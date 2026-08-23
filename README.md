@@ -9,7 +9,7 @@
   <img src="docs/media/05_vinylchroma_demonstration_vinyl_3_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration three">
 </p>
 
-### **Bring your vinyl colors to life and let them set the mood — from a subtle turntable glow to lighting up your room or your entire home.**
+<h3 align="center">Bring your vinyl colors to life and let them set the mood — from a subtle turntable glow to lighting up your room or your entire home.</h3>
 
 ## **Stable release: v1.0.0**
 
