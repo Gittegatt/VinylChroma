@@ -23,7 +23,7 @@
 </h3>
 <br>
 
-h3 align="center">
+<h3 align="center">
   No records on hand? Find another use for it. Stay creative.
 </h3>
 <br>
