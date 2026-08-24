@@ -19,11 +19,11 @@
 </p>
 
 <h3 align="center">
-  No colorful records on hand? Use the center label of the records or album covers instead!
+  No colorful records on hand? Use the center labels, combine them with the vinyl surface through sensor mixing, or use the album covers instead!
 </h3>
 
 <h3 align="center">
-  No records on hand? Find another use for it. Stay creative.
+  No records on hand? Find another use for it — it’s a color reader after all. Stay creative.
 </h3>
 <br>
 
