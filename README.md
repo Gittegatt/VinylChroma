@@ -19,7 +19,7 @@
 </p>
 
 <h3 align="center">
-  No colorful records on hand? Use their album covers instead!
+  No colorful records on hand? Use the center label of the records or album covers instead!
 </h3>
 <br>
 
