@@ -21,7 +21,6 @@
 <h3 align="center">
   No colorful records on hand? Use the center label of the records or album covers instead!
 </h3>
-<br>
 
 <h3 align="center">
   No records on hand? Find another use for it. Stay creative.
@@ -48,6 +47,16 @@ drive the addressable LED strip data line itself.
 - WLED integration with segment, brightness, and effect support
 - Responsive web interface with diagnostics, debug tools, and OTA updates
 - Multi-board support with board-specific GPIO validation
+
+## 🌈 Sensor Placement
+
+VinylChroma is not limited to measuring the vinyl surface itself.
+
+- **Vinyl surface** – measures the actual record color and is the recommended default.
+- **Center label** – especially useful for black or very dark records.
+- **Album cover** – uses the cover artwork as the color source instead.
+
+With multiple sensors, different positions can be combined and weighted individually, for example using one sensor for the vinyl surface and another for the center label.
 
 ## 🧩 Supported Hardware
 
