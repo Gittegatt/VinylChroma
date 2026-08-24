@@ -9,7 +9,7 @@
 
 
 <h3 align="center">
-  Bring your vinyl colors to life and let them shape the visual mood — from a subtle turntable glow to lighting up your room or your entire home.
+  Bring your records to life and let them shape the visual mood — from a subtle turntable glow to lighting up your room or your entire home.
 </h3>
 <br>
 
