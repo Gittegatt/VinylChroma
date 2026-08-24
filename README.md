@@ -38,25 +38,16 @@ VinylChroma controller handles sensing,
 calibration, averaging, presence detection, and output decisions; it does not
 drive the addressable LED strip data line itself.
 
+## ✨ Key Features
 
-## ✨ Features
-
-- One to four independently configurable TCS34725 color sensors
-- Direct I²C operation for one sensor or TCA9548A multiplexing for two to four
-- Automatic, shared-manual, and per-sensor gain/integration control
-- Per-sensor white calibration with dark/white light references and optional RGB fine-tuning
+- Support for 1–4 TCS34725 color sensors
+- Direct I²C or TCA9548A multiplexing
+- Automatic exposure control and per-sensor calibration
 - Instant, rolling-time, and turntable-revolution averaging
-- Vinyl presence detection through the exposure-normalized Clear channel
-- Configurable color acceptance, default-color, and WLED-off timers
-- Adjustable output Value normalization after sensor weighting and averaging
-- Optional calibrated darkness cutoff for very dark detected vinyl colors
-- WLED segment selection, optional brightness transmission, and optional effect preservation
-- Static color overrides plus RGB Rainbow and Marble test effects
-- RAM-only color history, diagnostics, logs, and live sensor information
-- Embedded responsive web interface with validation and concise help text
-- Configuration backup/restore, browser-based OTA updates with a persistent allow/deny switch, and factory reset
-- Optional HTTP Basic Authentication for the web interface and built-in APIs
-- Compile-time board profiles with board-specific defaults and GPIO validation
+- Vinyl presence detection with configurable color handling
+- WLED integration with segment, brightness, and effect support
+- Responsive web interface with diagnostics, debug tools, and OTA updates
+- Multi-board support with board-specific GPIO validation
 
 ## 🧩 Supported Hardware
 
