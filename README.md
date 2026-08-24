@@ -17,6 +17,10 @@
   <img src="docs/media/04_vinylchroma_demonstration_vinyl_2_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration two">
   <img src="docs/media/05_vinylchroma_demonstration_vinyl_3_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration three">
 </p>
+
+<h3 align="center">
+  No colorful records on hand? Use their sleeves instead!
+</h3>
 <br>
 
 
