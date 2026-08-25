@@ -163,7 +163,7 @@ The firmware and source code remain freely available here on GitHub. The optiona
 
 If you like this project and would like to support its development, purchasing the enclosure model would be greatly appreciated!
 
-**[Get the VinylChroma enclosure on Cults3D](https://cults3d.com/de/modell-3d/gadget/vinylchroma-combined-case-for-controller-and-sensor)**
+**[Get the VinylChroma enclosure (Standard & Flat) on Cults3D](https://cults3d.com/de/modell-3d/gadget/vinylchroma-combined-case-for-controller-and-sensor)**
 
 ## 🚀 Getting Started
 
