@@ -4,7 +4,7 @@
 <br>
 <p align="center">
   <img src="docs/media/02_vinylchroma_demonstration_darkness_cutoff_320.gif" width="320" alt="VinylChroma darkness cutoff demonstration">
-  <img src="docs/media/03_vinylchroma_demonstration_vinyl_1_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration one">
+  <img src="docs/media/04_vinylchroma_demonstration_vinyl_2_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration one">
 </p>
 
 
@@ -14,8 +14,8 @@
 <br>
 
 <p align="center">
-  <img src="docs/media/04_vinylchroma_demonstration_vinyl_2_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration two">
-  <img src="docs/media/05_vinylchroma_demonstration_vinyl_3_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration three">
+  <img src="docs/media/03_vinylchroma_demonstration_vinyl_1_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration two">
+  <img src="docs/media/06_vinylchroma_demonstration_vinyl_3_play_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration three">
 </p>
 
 <h3 align="center">
@@ -157,13 +157,13 @@ its complete allowed list, and its reservation notes above the GPIO fields.
 
 ## 🏗️ 3D Printable Enclosure
 
-I designed a dedicated 3D-printable enclosure for VinylChroma that provides space for the ESP32-S3 SuperMini and the TCS34725 color sensor, including the sensor light shield and PCB mounting features.
+I designed a dedicated 3D-printable enclosure for VinylChroma that provides space for the ESP32 controller and the TCS34725 color sensor, including the sensor light shield and PCB mounting features.
 
 The firmware and source code remain freely available here on GitHub. The optional enclosure STL files are available separately on Cults3D.
 
 If you like this project and would like to support its development, purchasing the enclosure model would be greatly appreciated!
 
-**[Get the VinylChroma enclosure (Standard & Flat) on Cults3D](https://cults3d.com/de/modell-3d/gadget/vinylchroma-combined-case-for-controller-and-sensor)**
+**[Get the VinylChroma Controller & Sensor Enclosure (Standard & Flat) on Cults3D](https://cults3d.com/de/modell-3d/gadget/vinylchroma-combined-case-for-controller-and-sensor)**
 
 ## 🚀 Getting Started
 
