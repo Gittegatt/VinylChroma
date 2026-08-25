@@ -3,8 +3,8 @@
 <br>
 <br>
 <p align="center">
-  <img src="docs/media/02_vinylchroma_demonstration_darkness_cutoff_320.gif" width="320" alt="VinylChroma darkness cutoff demonstration">
-  <img src="docs/media/04_vinylchroma_demonstration_vinyl_2_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration one">
+  <img src="docs/media/02_vinylchroma_demonstration_darkness_cutoff_240.gif" width="320" alt="VinylChroma darkness cutoff demonstration">
+  <img src="docs/media/04_vinylchroma_demonstration_vinyl_2_240.gif" width="320" alt="VinylChroma vinyl color detection demonstration one">
 </p>
 
 
@@ -14,8 +14,8 @@
 <br>
 
 <p align="center">
-  <img src="docs/media/03_vinylchroma_demonstration_vinyl_1_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration two">
-  <img src="docs/media/06_vinylchroma_demonstration_vinyl_3_play_320.gif" width="320" alt="VinylChroma vinyl color detection demonstration three">
+  <img src="docs/media/03_vinylchroma_demonstration_vinyl_1_240.gif" width="320" alt="VinylChroma vinyl color detection demonstration two">
+  <img src="docs/media/06_vinylchroma_demonstration_vinyl_3_play_240.gif" width="320" alt="VinylChroma vinyl color detection demonstration three">
 </p>
 
 <h3 align="center">
