@@ -573,6 +573,14 @@ written license from the copyright holder. Because commercial use is
 restricted, this is not an OSI-approved open-source license. Third-party
 components remain subject to their respective licenses.
 
+## AI Notice
+
+AI-assisted coding tools were used during the development of this project.
+
+Use of this source code for AI or machine-learning training, fine-tuning,
+dataset creation, or model improvement is prohibited without prior written
+permission from the copyright holder.
+
 ## ☕ Support VinylChroma
 
 If you enjoy VinylChroma and would like to support its development:
