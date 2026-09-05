@@ -581,11 +581,11 @@ Use of this source code for AI or machine-learning training, fine-tuning,
 dataset creation, or model improvement is prohibited without prior written
 permission from the copyright holder.
 
-## ☕ Support VinylChroma
+## ☕ Support the project
 
-If you enjoy VinylChroma and would like to support its development:
+If you enjoy the project and would like to support its development, a small contribution is always appreciated.
 
-[![Support VinylChroma on Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/gittegatt)
+[![Support me on Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/gittegatt)
 
 ## ✉️ Contact
 
