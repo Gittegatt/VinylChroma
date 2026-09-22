@@ -585,7 +585,9 @@ permission from the copyright holder.
 
 If you enjoy the project and would like to support its development, a small contribution is always appreciated.
 
-[![Support me on Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/gittegatt)
+[Support me on Ko-fi](https://ko-fi.com/gittegatt)
+
+[Support me on buymeacoffee](https://buymeacoffee.com/gittegatt)
 
 ## ✉️ Contact
 
