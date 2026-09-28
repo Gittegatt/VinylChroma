@@ -589,8 +589,6 @@ If you enjoy the project and would like to support its development, a small cont
 
 [Support on Ko-fi](https://ko-fi.com/gittegatt)
 
-[Support on Buy Me a Coffee](https://buymeacoffee.com/gittegatt)
-
 ## ✉️ Contact
 
 For project information and commercial licensing inquiries, visit
