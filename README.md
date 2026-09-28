@@ -585,11 +585,11 @@ permission from the copyright holder.
 
 If you enjoy the project and would like to support its development, a small contribution is always appreciated.
 
-[Star VinylChroma on GitHub](https://github.com/Gittegatt/VinylChroma)
+[Star on GitHub](https://github.com/Gittegatt/VinylChroma)
 
-[Support MarbleScape on Ko-fi](https://ko-fi.com/gittegatt)
+[Support on Ko-fi](https://ko-fi.com/gittegatt)
 
-[Support MarbleScape on Buy Me a Coffee](https://buymeacoffee.com/gittegatt)
+[Support on Buy Me a Coffee](https://buymeacoffee.com/gittegatt)
 
 ## ✉️ Contact
 
